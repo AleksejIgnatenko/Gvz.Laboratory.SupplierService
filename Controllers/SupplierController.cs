@@ -1,6 +1,7 @@
 ﻿using Gvz.Laboratory.SupplierService.Abstractions;
 using Gvz.Laboratory.SupplierService.Contracts;
 using Microsoft.AspNetCore.Mvc;
+using Serilog;
 
 namespace Gvz.Laboratory.SupplierService.Controllers
 {
@@ -19,7 +20,7 @@ namespace Gvz.Laboratory.SupplierService.Controllers
         public async Task<ActionResult> CreateSupplierAsync([FromBody] CreateSupplierRequest createSupplierRequest)
         {
             var id = await _supplierService.CreateSupplierAsync(Guid.NewGuid(),
-                                                                createSupplierRequest.Name,
+                                                                createSupplierRequest.SupplierName,
                                                                 createSupplierRequest.Manufacturer);
 
             return Ok();

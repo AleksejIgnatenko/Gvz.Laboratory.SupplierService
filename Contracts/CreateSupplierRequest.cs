@@ -1,7 +1,7 @@
 ﻿namespace Gvz.Laboratory.SupplierService.Contracts
 {
     public record CreateSupplierRequest(
-        string Name,
+        string SupplierName,
         string Manufacturer
         );
 }

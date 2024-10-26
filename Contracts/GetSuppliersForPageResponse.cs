@@ -2,7 +2,7 @@
 {
     public record GetSuppliersForPageResponse(
         Guid Id,
-        string Name,
+        string SupplierName,
         string Manufacturer
         );
 }

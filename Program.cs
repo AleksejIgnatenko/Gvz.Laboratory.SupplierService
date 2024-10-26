@@ -3,6 +3,7 @@ using Gvz.Laboratory.SupplierService;
 using Gvz.Laboratory.SupplierService.Abstractions;
 using Gvz.Laboratory.SupplierService.Infrastructure;
 using Gvz.Laboratory.SupplierService.Kafka;
+using Gvz.Laboratory.SupplierService.Middleware;
 using Gvz.Laboratory.SupplierService.Repositories;
 using Gvz.Laboratory.SupplierService.Services;
 using Mapster;
@@ -51,16 +52,28 @@ builder.Services.AddScoped<ISupplierRepository, SupplierRepository>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+//if (app.Environment.IsDevelopment())
+//{
+//    app.UseSwagger();
+//    app.UseSwaggerUI();
+//}
+
+app.UseSwagger();
+app.UseSwaggerUI();
+
+app.UseMiddleware<ExceptionHandlerMiddleware>();
 
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.UseCors(x =>
+{
+    x.WithHeaders().AllowAnyHeader();
+    x.WithOrigins("http://localhost:3000");
+    x.WithMethods().AllowAnyMethod();
+});
 
 app.Run();
