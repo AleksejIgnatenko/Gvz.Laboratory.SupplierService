@@ -54,13 +54,11 @@ namespace Gvz.Laboratory.SupplierService.Services
             return id;
         }
 
-        public async Task<Guid> DeleteSupplierAsync(Guid id)
+        public async Task DeleteSupplierAsync(List<Guid> ids)
         {
-            await _supplierRepository.DeleteSupplierAsync(id);
+            await _supplierRepository.DeleteSupplierAsync(ids);
 
-            await _supplierKafkaProducer.SendUserToKafka(id, "delete-supplier-topic");
-
-            return id;
+            await _supplierKafkaProducer.SendUserToKafka(ids, "delete-supplier-topic");
         }
     }
 }

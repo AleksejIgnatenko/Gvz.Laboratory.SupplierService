@@ -2,6 +2,6 @@
 {
     public record GetSuppliersForPageResponseWrapper(
         List<GetSuppliersForPageResponse> Suppliers,
-        int NumberUsers
+        int NumberSuppliers
         );
 }

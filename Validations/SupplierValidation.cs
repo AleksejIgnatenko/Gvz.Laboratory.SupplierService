@@ -7,11 +7,13 @@ namespace Gvz.Laboratory.SupplierService.Validations
     {
         public SupplierValidation()
         {
-            RuleFor(x => x.Name)
-                .NotEmpty().WithMessage("Фамилия не может быть пустая");
+            RuleFor(x => x.SupplierName)
+                .NotEmpty().WithMessage("Название поставщика не может быть пустым")
+                .Matches(@"^[A-Za-zА-Яа-яЁё]+$").WithMessage("Имя должно содержать только буквы");
 
             RuleFor(x => x.Manufacturer)
-                .NotEmpty().WithMessage("Фамилия не может быть пустая");
+                .NotEmpty().WithMessage("Название производителя не может быть пустым")
+                .Matches(@"^[A-Za-zА-Яа-яЁё]+$").WithMessage("Имя должно содержать только буквы");
         }
     }
 }

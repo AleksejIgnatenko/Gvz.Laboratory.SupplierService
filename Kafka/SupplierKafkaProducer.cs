@@ -20,9 +20,9 @@ namespace Gvz.Laboratory.SupplierService.Kafka
             await _producer.ProduceAsync(topic, new Message<Null, string> { Value = serializedSupplier });
         }
 
-        public async Task SendUserToKafka(Guid id, string topic)
+        public async Task SendUserToKafka(List<Guid> ids, string topic)
         {
-            var serializedId = JsonSerializer.Serialize(id);
+            var serializedId = JsonSerializer.Serialize(ids);
             await _producer.ProduceAsync(topic, new Message<Null, string> { Value = serializedId });
         }
     }

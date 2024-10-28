@@ -31,7 +31,7 @@ namespace Gvz.Laboratory.SupplierService.Controllers
         {
             var (suppliers, numberSuppliers) = await _supplierService.GetSuppliersForPageAsync(page);
 
-            var response = suppliers.Select(s => new GetSuppliersForPageResponse(s.Id, s.Name, s.Manufacturer)).ToList();
+            var response = suppliers.Select(s => new GetSuppliersForPageResponse(s.Id, s.SupplierName, s.Manufacturer)).ToList();
 
             var responseWrapper = new GetSuppliersForPageResponseWrapper(response, numberSuppliers);
 
@@ -41,14 +41,20 @@ namespace Gvz.Laboratory.SupplierService.Controllers
         [HttpPut("{id:guid}")]
         public async Task<ActionResult> UpdateSupplierAsync(Guid id, [FromBody] UpdateSupplierRequest updateSupplierRequest)
         {
-            await _supplierService.UpdateSupplierAsync(id, updateSupplierRequest.Name, updateSupplierRequest.Manufacturer);
+            await _supplierService.UpdateSupplierAsync(id, updateSupplierRequest.SupplierName, updateSupplierRequest.Manufacturer);
             return Ok();
         }
 
-        [HttpDelete("{id:guid}")]
-        public async Task<ActionResult> DeleteSupplierAsync(Guid id)
+        [HttpDelete]
+        public async Task<ActionResult> DeleteSuppliersAsync([FromBody] List<Guid> ids)
         {
-            await _supplierService.DeleteSupplierAsync(id);
+            if (ids == null || !ids.Any())
+            {
+                return BadRequest("No supplier IDs provided.");
+            }
+
+            await _supplierService.DeleteSupplierAsync(ids);
+
             return Ok();
         }
     }

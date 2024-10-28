@@ -6,13 +6,13 @@ namespace Gvz.Laboratory.SupplierService.Models
     public class SupplierModel
     {
         public Guid Id { get; }
-        public string Name { get; } = string.Empty;
+        public string SupplierName { get; } = string.Empty;
         public string Manufacturer { get; } = string.Empty;
 
         public SupplierModel(Guid id, string name, string manufacturer)
         {
             Id = id;
-            Name = name;
+            SupplierName = name;
             Manufacturer = manufacturer;
         }
 

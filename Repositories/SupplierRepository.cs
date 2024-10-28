@@ -17,14 +17,14 @@ namespace Gvz.Laboratory.SupplierService.Repositories
 
         public async Task<Guid> CreateSupplierAsync(SupplierModel supplier)
         {
-            var existingSupplier = await _context.Suppliers.FirstOrDefaultAsync(s => s.Name.Equals(supplier.Name));
+            var existingSupplier = await _context.Suppliers.FirstOrDefaultAsync(s => s.SupplierName.Equals(supplier.SupplierName));
 
             if (existingSupplier != null) { throw new RepositoryException("Такой поставщик уже существует"); }
 
             var supplierEntity = new SupplierEntity
             {
                 Id = supplier.Id,
-                Name = supplier.Name,
+                SupplierName = supplier.SupplierName,
                 Manufacturer = supplier.Manufacturer,
                 DateCreate = DateTime.UtcNow,
             };
@@ -48,7 +48,7 @@ namespace Gvz.Laboratory.SupplierService.Repositories
 
             var suppliers = supplierEntities.Select(s => SupplierModel.Create(
                 s.Id,
-                s.Name,
+                s.SupplierName,
                 s.Manufacturer,
                 false).supplier).ToList();
 
@@ -60,20 +60,18 @@ namespace Gvz.Laboratory.SupplierService.Repositories
             await _context.Suppliers
                 .Where(s => s.Id == supplier.Id)
                 .ExecuteUpdateAsync(s => s
-                    .SetProperty(s => s.Name, supplier.Name)
+                    .SetProperty(s => s.SupplierName, supplier.SupplierName)
                     .SetProperty(s => s.Manufacturer, supplier.Manufacturer)
                 );
 
             return supplier.Id;
         }
 
-        public async Task<Guid> DeleteSupplierAsync(Guid id)
+        public async Task DeleteSupplierAsync(List<Guid> ids)
         {
             await _context.Suppliers
-                .Where(s => s.Id == id)
+                .Where(s => ids.Contains(s.Id))
                 .ExecuteDeleteAsync();
-
-            return id;
         }
     }
 }

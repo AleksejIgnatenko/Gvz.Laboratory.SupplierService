@@ -5,7 +5,7 @@ namespace Gvz.Laboratory.SupplierService.Abstractions
     public interface ISupplierRepository
     {
         Task<Guid> CreateSupplierAsync(SupplierModel supplier);
-        Task<Guid> DeleteSupplierAsync(Guid id);
+        Task DeleteSupplierAsync(List<Guid> ids);
         Task<(List<SupplierModel> suppliers, int numberSuppliers)> GetSuppliersForPageAsync(int page);
         Task<Guid> UpdateSupplierAsync(SupplierModel supplier);
     }
