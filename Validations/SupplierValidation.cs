@@ -8,12 +8,10 @@ namespace Gvz.Laboratory.SupplierService.Validations
         public SupplierValidation()
         {
             RuleFor(x => x.SupplierName)
-                .NotEmpty().WithMessage("Название поставщика не может быть пустым")
-                .Matches(@"^[A-Za-zА-Яа-яЁё]+$").WithMessage("Имя должно содержать только буквы");
+                .NotEmpty().WithMessage("Название поставщика не может быть пустым");
 
             RuleFor(x => x.Manufacturer)
-                .NotEmpty().WithMessage("Название производителя не может быть пустым")
-                .Matches(@"^[A-Za-zА-Яа-яЁё]+$").WithMessage("Имя должно содержать только буквы");
+                .NotEmpty().WithMessage("Название производителя не может быть пустым");
         }
     }
 }

@@ -39,12 +39,23 @@ builder.Services.AddSingleton(() =>
 });
 builder.Services.AddScoped<ISupplierMapper, SupplierMapper>();
 
-var config = new ProducerConfig
+var producerConfig = new ProducerConfig
 {
     BootstrapServers = "kafka:29092"
 };
-builder.Services.AddSingleton<IProducer<Null, string>>(new ProducerBuilder<Null, string>(config).Build());
+builder.Services.AddSingleton<IProducer<Null, string>>(new ProducerBuilder<Null, string>(producerConfig).Build());
 builder.Services.AddScoped<ISupplierKafkaProducer, SupplierKafkaProducer>();
+
+var consumerConfig = new ConsumerConfig
+{
+    BootstrapServers = "kafka:29092",
+    GroupId = "manufacturer-group-id",
+    AutoOffsetReset = AutoOffsetReset.Earliest
+};
+builder.Services.AddSingleton(consumerConfig);
+
+builder.Services.AddSingleton<ManufacturerKafkaConsumer>();
+builder.Services.AddHostedService(provider => provider.GetRequiredService<ManufacturerKafkaConsumer>());
 
 builder.Services.AddScoped<ISupplierService, SupplierService>();
 builder.Services.AddScoped<ISupplierRepository, SupplierRepository>();

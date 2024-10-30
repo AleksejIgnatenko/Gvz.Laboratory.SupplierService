@@ -44,6 +44,17 @@ namespace Gvz.Laboratory.SupplierService.Repositories
                 .Take(20)
                 .ToListAsync();
 
+            if (!supplierEntities.Any() && page != 0)
+            {
+                page--;
+                supplierEntities = await _context.Suppliers
+                    .AsNoTracking()
+                    .OrderByDescending(s => s.DateCreate)
+                    .Skip(page * 20)
+                    .Take(20)
+                    .ToListAsync();
+            }
+
             var numberSuppliers = await _context.Suppliers.CountAsync();
 
             var suppliers = supplierEntities.Select(s => SupplierModel.Create(
