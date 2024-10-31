@@ -2,6 +2,6 @@
 {
     public record CreateSupplierRequest(
         string SupplierName,
-        string Manufacturer
+        List<Guid> ManufacturersIds
         );
 }

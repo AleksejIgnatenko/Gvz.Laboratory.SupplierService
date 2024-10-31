@@ -1,7 +1,6 @@
 ﻿using Gvz.Laboratory.SupplierService.Abstractions;
 using Gvz.Laboratory.SupplierService.Contracts;
 using Microsoft.AspNetCore.Mvc;
-using Serilog;
 
 namespace Gvz.Laboratory.SupplierService.Controllers
 {
@@ -21,7 +20,7 @@ namespace Gvz.Laboratory.SupplierService.Controllers
         {
             var id = await _supplierService.CreateSupplierAsync(Guid.NewGuid(),
                                                                 createSupplierRequest.SupplierName,
-                                                                createSupplierRequest.Manufacturer);
+                                                                createSupplierRequest.ManufacturersIds);
 
             return Ok();
         }
@@ -31,7 +30,7 @@ namespace Gvz.Laboratory.SupplierService.Controllers
         {
             var (suppliers, numberSuppliers) = await _supplierService.GetSuppliersForPageAsync(page);
 
-            var response = suppliers.Select(s => new GetSuppliersForPageResponse(s.Id, s.SupplierName, s.Manufacturer)).ToList();
+            var response = suppliers.Select(s => new GetSuppliersForPageResponse(s.Id, s.SupplierName)).ToList();
 
             var responseWrapper = new GetSuppliersForPageResponseWrapper(response, numberSuppliers);
 
@@ -41,7 +40,7 @@ namespace Gvz.Laboratory.SupplierService.Controllers
         [HttpPut("{id:guid}")]
         public async Task<ActionResult> UpdateSupplierAsync(Guid id, [FromBody] UpdateSupplierRequest updateSupplierRequest)
         {
-            await _supplierService.UpdateSupplierAsync(id, updateSupplierRequest.SupplierName, updateSupplierRequest.Manufacturer);
+            await _supplierService.UpdateSupplierAsync(id, updateSupplierRequest.SupplierName);
             return Ok();
         }
 

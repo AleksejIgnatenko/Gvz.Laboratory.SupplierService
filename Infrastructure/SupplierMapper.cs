@@ -12,7 +12,6 @@ namespace Gvz.Laboratory.SupplierService.Infrastructure
             {
                 Id = supplier.Id,
                 Name = supplier.SupplierName,
-                Manufacturer = supplier.Manufacturer,
             };
         }
     }

@@ -9,23 +9,28 @@ namespace Gvz.Laboratory.SupplierService.Repositories
     public class SupplierRepository : ISupplierRepository
     {
         private readonly GvzLaboratorySupplierServiceDbContext _context;
+        private readonly IManufacturerRepository _manufacturerRepository;
 
-        public SupplierRepository(GvzLaboratorySupplierServiceDbContext context)
+        public SupplierRepository(GvzLaboratorySupplierServiceDbContext context, IManufacturerRepository manufacturerRepository)
         {
             _context = context;
+            _manufacturerRepository = manufacturerRepository;
         }
 
-        public async Task<Guid> CreateSupplierAsync(SupplierModel supplier)
+        public async Task<Guid> CreateSupplierAsync(SupplierModel supplier, List<Guid> manufacturersIds)
         {
             var existingSupplier = await _context.Suppliers.FirstOrDefaultAsync(s => s.SupplierName.Equals(supplier.SupplierName));
 
             if (existingSupplier != null) { throw new RepositoryException("Такой поставщик уже существует"); }
 
+            var manufacturers = await _manufacturerRepository.GetManufacturersByIds(manufacturersIds) 
+                ?? throw new RepositoryException("Поставщики не были найдены");
+
             var supplierEntity = new SupplierEntity
             {
                 Id = supplier.Id,
                 SupplierName = supplier.SupplierName,
-                Manufacturer = supplier.Manufacturer,
+                Manufacturers = manufacturers,
                 DateCreate = DateTime.UtcNow,
             };
 
@@ -35,22 +40,22 @@ namespace Gvz.Laboratory.SupplierService.Repositories
             return supplierEntity.Id;
         }
 
-        public async Task<(List<SupplierModel> suppliers, int numberSuppliers)> GetSuppliersForPageAsync(int page)
+        public async Task<(List<SupplierModel> suppliers, int numberSuppliers)> GetSuppliersForPageAsync(int pageNumber)
         {
             var supplierEntities = await _context.Suppliers
                 .AsNoTracking()
                 .OrderByDescending(s => s.DateCreate)
-                .Skip(page * 20)
+                .Skip(pageNumber * 20)
                 .Take(20)
                 .ToListAsync();
 
-            if (!supplierEntities.Any() && page != 0)
+            if (!supplierEntities.Any() && pageNumber != 0)
             {
-                page--;
+                pageNumber--;
                 supplierEntities = await _context.Suppliers
                     .AsNoTracking()
                     .OrderByDescending(s => s.DateCreate)
-                    .Skip(page * 20)
+                    .Skip(pageNumber * 20)
                     .Take(20)
                     .ToListAsync();
             }
@@ -60,7 +65,6 @@ namespace Gvz.Laboratory.SupplierService.Repositories
             var suppliers = supplierEntities.Select(s => SupplierModel.Create(
                 s.Id,
                 s.SupplierName,
-                s.Manufacturer,
                 false).supplier).ToList();
 
             return (suppliers, numberSuppliers);
@@ -72,7 +76,6 @@ namespace Gvz.Laboratory.SupplierService.Repositories
                 .Where(s => s.Id == supplier.Id)
                 .ExecuteUpdateAsync(s => s
                     .SetProperty(s => s.SupplierName, supplier.SupplierName)
-                    .SetProperty(s => s.Manufacturer, supplier.Manufacturer)
                 );
 
             return supplier.Id;

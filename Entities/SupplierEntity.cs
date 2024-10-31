@@ -4,7 +4,7 @@
     {
         public Guid Id { get; set; }
         public string SupplierName { get; set; } = string.Empty;
-        public string Manufacturer { get; set; } = string.Empty;
+        public List<ManufacturerEntity> Manufacturers { get; set; } = new List<ManufacturerEntity>();
         public DateTime DateCreate { get; set; }
     }
 }

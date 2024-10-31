@@ -2,7 +2,6 @@
 {
     public record UpdateSupplierRequest(
         Guid Id,
-        string SupplierName,
-        string Manufacturer
+        string SupplierName
         );
 }

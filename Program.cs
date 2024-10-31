@@ -54,10 +54,17 @@ var consumerConfig = new ConsumerConfig
 };
 builder.Services.AddSingleton(consumerConfig);
 
-builder.Services.AddSingleton<ManufacturerKafkaConsumer>();
-builder.Services.AddHostedService(provider => provider.GetRequiredService<ManufacturerKafkaConsumer>());
+builder.Services.AddSingleton<AddManufacturerKafkaConsumer>();
+builder.Services.AddHostedService(provider => provider.GetRequiredService<AddManufacturerKafkaConsumer>());
+
+builder.Services.AddSingleton<UpdateManufacturerKafkaConsumer>();
+builder.Services.AddHostedService(provider => provider.GetRequiredService<UpdateManufacturerKafkaConsumer>());
+
+builder.Services.AddSingleton<DeleteManufacturerKafkaConsumer>();
+builder.Services.AddHostedService(provider => provider.GetRequiredService<DeleteManufacturerKafkaConsumer>());
 
 builder.Services.AddScoped<ISupplierService, SupplierService>();
+builder.Services.AddScoped<IManufacturerRepository, ManufacturerRepository>();
 builder.Services.AddScoped<ISupplierRepository, SupplierRepository>();
 
 var app = builder.Build();
