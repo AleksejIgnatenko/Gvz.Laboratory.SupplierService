@@ -40,7 +40,7 @@ namespace Gvz.Laboratory.SupplierService.Controllers
         [HttpPut("{id:guid}")]
         public async Task<ActionResult> UpdateSupplierAsync(Guid id, [FromBody] UpdateSupplierRequest updateSupplierRequest)
         {
-            await _supplierService.UpdateSupplierAsync(id, updateSupplierRequest.SupplierName);
+            await _supplierService.UpdateSupplierAsync(id, updateSupplierRequest.SupplierName, updateSupplierRequest.ManufacturersIds);
             return Ok();
         }
 

@@ -23,14 +23,14 @@ namespace Gvz.Laboratory.SupplierService.Repositories
 
             if (existingSupplier != null) { throw new RepositoryException("Такой поставщик уже существует"); }
 
-            var manufacturers = await _manufacturerRepository.GetManufacturersByIds(manufacturersIds) 
+            var manufacturerEntities = await _manufacturerRepository.GetManufacturersByIdsAsync(manufacturersIds) 
                 ?? throw new RepositoryException("Поставщики не были найдены");
 
             var supplierEntity = new SupplierEntity
             {
                 Id = supplier.Id,
                 SupplierName = supplier.SupplierName,
-                Manufacturers = manufacturers,
+                Manufacturers = manufacturerEntities,
                 DateCreate = DateTime.UtcNow,
             };
 
@@ -70,15 +70,24 @@ namespace Gvz.Laboratory.SupplierService.Repositories
             return (suppliers, numberSuppliers);
         }
 
-        public async Task<Guid> UpdateSupplierAsync(SupplierModel supplier)
+        public async Task<Guid> UpdateSupplierAsync(SupplierModel supplier, List<Guid> manufacturersIds)
         {
-            await _context.Suppliers
-                .Where(s => s.Id == supplier.Id)
-                .ExecuteUpdateAsync(s => s
-                    .SetProperty(s => s.SupplierName, supplier.SupplierName)
-                );
+            var manufacturerEntities = await _manufacturerRepository.GetManufacturersByIdsAsync(manufacturersIds)
+                ?? throw new RepositoryException("Производитель(и) не был(и) найден(ы)");
 
-            return supplier.Id;
+            var existingSupplier = await _context.Suppliers
+                .Include(s => s.Manufacturers)
+                .FirstOrDefaultAsync(s => s.Id == supplier.Id)
+                ?? throw new RepositoryException("Поставщик не найден");
+
+            existingSupplier.SupplierName = supplier.SupplierName;
+
+            existingSupplier.Manufacturers.Clear();
+            existingSupplier.Manufacturers.AddRange(manufacturerEntities);
+
+            await _context.SaveChangesAsync();
+
+            return existingSupplier.Id;
         }
 
         public async Task DeleteSupplierAsync(List<Guid> ids)

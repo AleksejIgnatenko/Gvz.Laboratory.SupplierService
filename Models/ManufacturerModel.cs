@@ -4,6 +4,7 @@
     {
         public Guid Id { get; }
         public string ManufacturerName { get; } = string.Empty;
+        public SupplierModel? Supplier { get; }
 
         public ManufacturerModel(Guid id, string manufacturerName)
         {
@@ -11,7 +12,7 @@
             ManufacturerName = manufacturerName;
         }
 
-        public static ManufacturerModel Create(Guid id, string manufacturerName, bool useValidation = true)
+        public static ManufacturerModel Create(Guid id, string manufacturerName)
         {
             ManufacturerModel manufacturer = new ManufacturerModel(id, manufacturerName);
             return manufacturer;

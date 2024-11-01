@@ -9,6 +9,10 @@ namespace Gvz.Laboratory.SupplierService.Models
         public string SupplierName { get; } = string.Empty;
         public List<ManufacturerModel> Manufacturers { get; } = new List<ManufacturerModel>();
 
+        public SupplierModel()
+        {
+        }
+
         public SupplierModel(Guid id, string name)
         {
             Id = id;

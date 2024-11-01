@@ -38,7 +38,7 @@ namespace Gvz.Laboratory.SupplierService.Services
             return await _supplierRepository.GetSuppliersForPageAsync(page);
         }
 
-        public async Task<Guid> UpdateSupplierAsync(Guid id, string name)
+        public async Task<Guid> UpdateSupplierAsync(Guid id, string name, List<Guid> manufacturersIds)
         {
             var (errors, supplier) = SupplierModel.Create(id, name);
             if (errors.Count > 0)
@@ -46,7 +46,7 @@ namespace Gvz.Laboratory.SupplierService.Services
                 throw new SupplierValidationException(errors);
             }
 
-            await _supplierRepository.UpdateSupplierAsync(supplier);
+            await _supplierRepository.UpdateSupplierAsync(supplier, manufacturersIds);
 
             var supplierDto = _supplierMapper.MapTo(supplier) ?? throw new Exception();
             await _supplierKafkaProducer.SendUserToKafka(supplierDto, "update-supplier-topic");

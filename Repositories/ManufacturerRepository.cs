@@ -1,7 +1,7 @@
 ﻿using Gvz.Laboratory.SupplierService.Abstractions;
 using Gvz.Laboratory.SupplierService.Dto;
 using Gvz.Laboratory.SupplierService.Entities;
-using Gvz.Laboratory.SupplierService.Exceptions;
+using Gvz.Laboratory.SupplierService.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace Gvz.Laboratory.SupplierService.Repositories
@@ -17,23 +17,35 @@ namespace Gvz.Laboratory.SupplierService.Repositories
 
         public async Task<Guid> CreateManufacturerAsync(ManufacturerDto manufacturer)
         {
-            //var existingManufacturer = await _context.Manufacturers.FirstOrDefaultAsync(m => m.ManufacturerName.Equals(manufacturer.ManufacturerName));
+            var existingManufacturer = await _context.Manufacturers.FirstOrDefaultAsync(m => m.ManufacturerName.Equals(manufacturer.ManufacturerName));
 
-            //if (existingManufacturer != null) { throw new RepositoryException("Такой производитель уже есть"); }
-
-            var manufacturerEntity = new ManufacturerEntity
+            if (existingManufacturer == null)
             {
-                Id = manufacturer.Id,
-                ManufacturerName = manufacturer.ManufacturerName,
-            };
 
-            await _context.Manufacturers.AddAsync(manufacturerEntity);
-            await _context.SaveChangesAsync();
+                var manufacturerEntity = new ManufacturerEntity
+                {
+                    Id = manufacturer.Id,
+                    ManufacturerName = manufacturer.ManufacturerName,
+                };
 
-            return manufacturerEntity.Id;
+                await _context.Manufacturers.AddAsync(manufacturerEntity);
+                await _context.SaveChangesAsync();
+            }
+
+            return manufacturer.Id;
         }
 
-        public async Task<List<ManufacturerEntity>> GetManufacturersByIds(List<Guid> manufacturersIds)
+        public async Task<List<ManufacturerModel>> GetSupplierManufacturersAsync(Guid supplierId)
+        {
+            var manufacturerEntities = await _context.Manufacturers
+                .Where(m => m.Supplier.Id == supplierId).ToListAsync();
+
+            var manufacturers = manufacturerEntities.Select(m => ManufacturerModel.Create(m.Id, m.ManufacturerName)).ToList();
+
+            return manufacturers;
+        }
+
+        public async Task<List<ManufacturerEntity>> GetManufacturersByIdsAsync(List<Guid> manufacturersIds)
         {
             var manufacturerEntities = await _context.Manufacturers
                 .Where(m => manufacturersIds.Contains(m.Id)).ToListAsync();

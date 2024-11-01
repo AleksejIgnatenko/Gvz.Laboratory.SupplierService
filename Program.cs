@@ -63,9 +63,11 @@ builder.Services.AddHostedService(provider => provider.GetRequiredService<Update
 builder.Services.AddSingleton<DeleteManufacturerKafkaConsumer>();
 builder.Services.AddHostedService(provider => provider.GetRequiredService<DeleteManufacturerKafkaConsumer>());
 
+
 builder.Services.AddScoped<ISupplierService, SupplierService>();
-builder.Services.AddScoped<IManufacturerRepository, ManufacturerRepository>();
 builder.Services.AddScoped<ISupplierRepository, SupplierRepository>();
+builder.Services.AddScoped<IManufacturerService, ManufacturerService>();
+builder.Services.AddScoped<IManufacturerRepository, ManufacturerRepository>();
 
 var app = builder.Build();
 

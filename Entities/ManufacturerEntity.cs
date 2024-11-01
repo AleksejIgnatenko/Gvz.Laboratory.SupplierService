@@ -4,5 +4,6 @@
     {
         public Guid Id { get; set; }
         public string ManufacturerName { get; set; } = string.Empty;
+        public SupplierEntity? Supplier { get; set; }
     }
 }
