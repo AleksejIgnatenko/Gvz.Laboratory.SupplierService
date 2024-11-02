@@ -12,6 +12,11 @@ namespace Gvz.Laboratory.SupplierService.Services
             _manufacturerRepository = manufacturerRepository;
         }
 
+        public async Task<(List<ManufacturerModel> manufacturers, int numberManufacturers)> GetSupplierManufacturersForPageAsync(Guid supplierId, int pageNumber)
+        {
+            return await _manufacturerRepository.GetSupplierManufacturersForPageAsync(supplierId, pageNumber);
+        }
+
         public async Task<List<ManufacturerModel>> GetSupplierManufacturers(Guid supplierId)
         {
             return await _manufacturerRepository.GetSupplierManufacturersAsync(supplierId);

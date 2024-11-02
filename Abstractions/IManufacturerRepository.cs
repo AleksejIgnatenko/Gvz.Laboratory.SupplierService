@@ -9,6 +9,7 @@ namespace Gvz.Laboratory.SupplierService.Abstractions
         Task<Guid> CreateManufacturerAsync(ManufacturerDto manufacturer);
         Task DeleteManufacturersAsync(List<Guid> ids);
         Task<List<ManufacturerModel>> GetSupplierManufacturersAsync(Guid supplierId);
+        Task<(List<ManufacturerModel> manufacturers, int numberManufacturers)> GetSupplierManufacturersForPageAsync(Guid supplierId, int pageNumber);
         Task<List<ManufacturerEntity>> GetManufacturersByIdsAsync(List<Guid> manufacturersIds);
         Task<Guid> UpdateManufacturerAsync(ManufacturerDto manufacturer);
     }

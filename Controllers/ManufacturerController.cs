@@ -17,13 +17,26 @@ namespace Gvz.Laboratory.SupplierService.Controllers
 
         [HttpGet]
         [Route("getSupplierManufacturers")]
-        public async Task<ActionResult> GetSupplierManufacturers(Guid supplierId)
+        public async Task<ActionResult> GetSupplierManufacturersAsync(Guid supplierId)
         {
             var manufacturers = await _manufacturerService.GetSupplierManufacturers(supplierId);
 
             var response = manufacturers.Select(m => new GetManufacturersResponse(m.Id, m.ManufacturerName)).ToList();
 
             return Ok(response);
+        }
+
+        [HttpGet]
+        [Route("getSupplierManufacturersForPage")]
+        public async Task<ActionResult> GetSupplierManufacturersForPageAsync(Guid supplierId, int pageNumber)
+        {
+            var (manufacturers, numberManufacturers) = await _manufacturerService.GetSupplierManufacturersForPageAsync(supplierId, pageNumber);
+
+            var response = manufacturers.Select(m => new GetManufacturersResponse(m.Id, m.ManufacturerName)).ToList();
+
+            var responseWrapper = new GetSupplierManufacturersForPageResponseWrapper(response, numberManufacturers);
+
+            return Ok(responseWrapper);
         }
     }
 }

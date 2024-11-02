@@ -1,6 +1,5 @@
 ﻿using Confluent.Kafka;
 using Gvz.Laboratory.SupplierService.Abstractions;
-using Gvz.Laboratory.SupplierService.Dto;
 using Serilog;
 using System.Text.Json;
 
