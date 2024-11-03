@@ -14,13 +14,13 @@ namespace Gvz.Laboratory.SupplierService.Kafka
             _producer = producer;
         }
 
-        public async Task SendUserToKafka(SupplierDto supplier, string topic)
+        public async Task SendToKafkaAsync(SupplierDto supplier, string topic)
         {
             var serializedSupplier = JsonSerializer.Serialize(supplier);
             await _producer.ProduceAsync(topic, new Message<Null, string> { Value = serializedSupplier });
         }
 
-        public async Task SendUserToKafka(List<Guid> ids, string topic)
+        public async Task SendToKafkaAsync(List<Guid> ids, string topic)
         {
             var serializedId = JsonSerializer.Serialize(ids);
             await _producer.ProduceAsync(topic, new Message<Null, string> { Value = serializedId });

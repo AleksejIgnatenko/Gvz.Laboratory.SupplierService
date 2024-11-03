@@ -28,7 +28,7 @@ namespace Gvz.Laboratory.SupplierService.Services
             await _supplierRepository.CreateSupplierAsync(supplier, manufacturersIds);
 
             var supplierDto = _supplierMapper.MapTo(supplier) ?? throw new Exception("Mapping error");
-            await _supplierKafkaProducer.SendUserToKafka(supplierDto, "add-supplier-topic");
+            await _supplierKafkaProducer.SendToKafkaAsync(supplierDto, "add-supplier-topic");
 
             return id;
         }
@@ -49,7 +49,7 @@ namespace Gvz.Laboratory.SupplierService.Services
             await _supplierRepository.UpdateSupplierAsync(supplier, manufacturersIds);
 
             var supplierDto = _supplierMapper.MapTo(supplier) ?? throw new Exception();
-            await _supplierKafkaProducer.SendUserToKafka(supplierDto, "update-supplier-topic");
+            await _supplierKafkaProducer.SendToKafkaAsync(supplierDto, "update-supplier-topic");
 
             return id;
         }
@@ -58,7 +58,7 @@ namespace Gvz.Laboratory.SupplierService.Services
         {
             await _supplierRepository.DeleteSupplierAsync(ids);
 
-            await _supplierKafkaProducer.SendUserToKafka(ids, "delete-supplier-topic");
+            await _supplierKafkaProducer.SendToKafkaAsync(ids, "delete-supplier-topic");
         }
     }
 }

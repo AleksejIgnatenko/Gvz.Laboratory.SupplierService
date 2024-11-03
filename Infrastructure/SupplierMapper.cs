@@ -11,7 +11,7 @@ namespace Gvz.Laboratory.SupplierService.Infrastructure
             return supplier == null ? null : new SupplierDto()
             {
                 Id = supplier.Id,
-                Name = supplier.SupplierName,
+                SupplierName = supplier.SupplierName,
             };
         }
     }

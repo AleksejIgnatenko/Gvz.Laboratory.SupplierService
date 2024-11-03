@@ -24,7 +24,7 @@ namespace Gvz.Laboratory.SupplierService.Repositories
             if (existingSupplier != null) { throw new RepositoryException("Такой поставщик уже существует"); }
 
             var manufacturerEntities = await _manufacturerRepository.GetManufacturersByIdsAsync(manufacturersIds) 
-                ?? throw new RepositoryException("Поставщики не были найдены");
+                ?? throw new RepositoryException("Производитель(и) не был(и) найден(ы)");
 
             var supplierEntity = new SupplierEntity
             {
@@ -92,6 +92,18 @@ namespace Gvz.Laboratory.SupplierService.Repositories
 
         public async Task DeleteSupplierAsync(List<Guid> ids)
         {
+            var supplierEntities = await _context.Suppliers
+                .Include(s => s.Manufacturers)
+                .Where(s => ids.Contains(s.Id))
+                .ToListAsync();
+
+            foreach (var supplierEntity in supplierEntities)
+            {
+                supplierEntity.Manufacturers.Clear();
+            }
+
+            await _context.SaveChangesAsync();
+
             await _context.Suppliers
                 .Where(s => ids.Contains(s.Id))
                 .ExecuteDeleteAsync();

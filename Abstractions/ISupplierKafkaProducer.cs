@@ -4,7 +4,7 @@ namespace Gvz.Laboratory.SupplierService.Abstractions
 {
     public interface ISupplierKafkaProducer
     {
-        Task SendUserToKafka(SupplierDto supplier, string topic);
-        Task SendUserToKafka(List<Guid> ids, string topic);
+        Task SendToKafkaAsync(SupplierDto supplier, string topic);
+        Task SendToKafkaAsync(List<Guid> ids, string topic);
     }
 }
