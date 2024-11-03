@@ -1,29 +1,28 @@
 ﻿using Confluent.Kafka;
 using Gvz.Laboratory.SupplierService.Abstractions;
-using Gvz.Laboratory.SupplierService.Dto;
 using Serilog;
 using System.Text.Json;
 
 namespace Gvz.Laboratory.SupplierService.Kafka
 {
-    public class UpdateManufacturerKafkaConsumer : IHostedService
+    public class DeleteProductKafkaConsumer : IHostedService
     {
         private readonly ConsumerConfig _config;
         private IConsumer<Ignore, string> _consumer;
         private CancellationTokenSource _cts;
-        private readonly IManufacturerRepository _manufacturerRepository;
+        private readonly IProductRepository _productRepository;
 
-        public UpdateManufacturerKafkaConsumer(ConsumerConfig config, IManufacturerRepository manufacturerRepository)
+        public DeleteProductKafkaConsumer(ConsumerConfig config, IProductRepository productRepository)
         {
             _config = config;
-            _manufacturerRepository = manufacturerRepository;
+            _productRepository = productRepository;
         }
 
         public Task StartAsync(CancellationToken cancellationToken)
         {
             _consumer = new ConsumerBuilder<Ignore, string>(_config).Build();
 
-            _consumer.Subscribe("update-manufacturer-topic");
+            _consumer.Subscribe("delete-product-topic");
 
             Task.Run(() => ConsumeMessages(cancellationToken));
 
@@ -40,10 +39,10 @@ namespace Gvz.Laboratory.SupplierService.Kafka
                     {
                         var cr = _consumer.Consume(cancellationToken);
 
-                        var addManufacturerDto = JsonSerializer.Deserialize<ManufacturerDto>(cr.Message.Value)
+                        var deleteProducts = JsonSerializer.Deserialize<List<Guid>>(cr.Message.Value)
                             ?? throw new InvalidOperationException("Deserialization failed: ManufacturerDto is null.");
 
-                        var addManufacturerId = await _manufacturerRepository.UpdateManufacturerAsync(addManufacturerDto);
+                        await _productRepository.DeleteProductsAsync(deleteProducts);
 
                     }
                     catch (ConsumeException e)

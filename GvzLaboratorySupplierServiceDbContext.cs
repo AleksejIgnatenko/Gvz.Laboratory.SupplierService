@@ -8,6 +8,7 @@ namespace Gvz.Laboratory.SupplierService
     {
         public DbSet<SupplierEntity> Suppliers { get; set; }
         public DbSet<ManufacturerEntity> Manufacturers { get; set; }
+        public DbSet<ProductEntity> Products { get; set; }
 
         public GvzLaboratorySupplierServiceDbContext(DbContextOptions<GvzLaboratorySupplierServiceDbContext> options) : base(options)
         {
