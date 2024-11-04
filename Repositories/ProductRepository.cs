@@ -90,7 +90,7 @@ namespace Gvz.Laboratory.SupplierService.Repositories
                 .Include(p => p.Suppliers)
                 .FirstOrDefaultAsync(p => p.Id == product.Id);
 
-            if ((supplierEntities != null) && (productEntity != null))
+            if (productEntity != null)
             {
                 productEntity.ProductName = product.ProductName;
 

@@ -33,6 +33,11 @@ namespace Gvz.Laboratory.SupplierService.Services
             return id;
         }
 
+        public async Task<List<SupplierModel>> GetSuppliersAsync()
+        {
+            return await _supplierRepository.GetSuppliersAsync();
+        }
+
         public async Task<(List<SupplierModel> suppliers, int numberSuppliers)> GetSuppliersForPageAsync(int page)
         {
             return await _supplierRepository.GetSuppliersForPageAsync(page);

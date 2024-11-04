@@ -26,11 +26,22 @@ namespace Gvz.Laboratory.SupplierService.Controllers
         }
 
         [HttpGet]
+        [Route("getSuppliersAsync")]
+        public async Task<ActionResult> GetSuppliersAsync()
+        {
+            var suppliers = await _supplierService.GetSuppliersAsync();
+
+            var response = suppliers.Select(s => new GetSuppliersResponse(s.Id, s.SupplierName)).ToList();
+
+            return Ok(response);
+        }
+
+        [HttpGet]
         public async Task<ActionResult> GetSuppliersForPageAsync(int page)
         {
             var (suppliers, numberSuppliers) = await _supplierService.GetSuppliersForPageAsync(page);
 
-            var response = suppliers.Select(s => new GetSuppliersForPageResponse(s.Id, s.SupplierName)).ToList();
+            var response = suppliers.Select(s => new GetSuppliersResponse(s.Id, s.SupplierName)).ToList();
 
             var responseWrapper = new GetSuppliersForPageResponseWrapper(response, numberSuppliers);
 

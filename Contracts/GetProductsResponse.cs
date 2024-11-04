@@ -1,7 +1,7 @@
 ﻿namespace Gvz.Laboratory.SupplierService.Contracts
 {
-    public record GetSuppliersForPageResponse(
+    public record GetProductsResponse(
         Guid Id,
-        string SupplierName
+        string ProductName
         );
 }

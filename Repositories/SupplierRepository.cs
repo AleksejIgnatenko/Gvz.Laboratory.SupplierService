@@ -40,6 +40,21 @@ namespace Gvz.Laboratory.SupplierService.Repositories
             return supplierEntity.Id;
         }
 
+        public async Task<List<SupplierModel>> GetSuppliersAsync()
+        {
+            var supplierEntities = await _context.Suppliers
+                .AsNoTracking()
+                .OrderByDescending(s => s.DateCreate)
+                .ToListAsync();
+
+            var suppliers = supplierEntities.Select(s => SupplierModel.Create(
+                s.Id, 
+                s.SupplierName, 
+                false).supplier).ToList();
+
+            return suppliers;
+        }
+
         public async Task<List<SupplierEntity>> GetSuppliersByIdsAsync(List<Guid> suppliersIds)
         {
             var supplierEntities = await _context.Suppliers
