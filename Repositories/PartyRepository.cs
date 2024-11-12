@@ -22,7 +22,7 @@ namespace Gvz.Laboratory.SupplierService.Repositories
             if (existingParty == null)
             {
                 var supplierEntity = await _supplierRepository.GetSupplierEntityByIdAsync(party.SupplierId)
-                    ?? throw new InvalidOperationException($"Supplier with Id '{party.ManufacturerId}' was not found.");
+                    ?? throw new InvalidOperationException($"Supplier with Id '{party.SupplierId}' was not found.");
 
                 var partyEntity = new PartyEntity
                 {
@@ -54,11 +54,24 @@ namespace Gvz.Laboratory.SupplierService.Repositories
         public async Task<(List<PartyModel> parties, int numberParties)> GetSupplierPartiesForPageAsync(Guid supplierId, int pageNumber)
         {
             var partyEntities = await _context.Parties
-                .AsNoTracking()
-                .Where(p => p.Supplier.Id == supplierId)
-                .Skip(pageNumber * 20)
-                .Take(20)
-                .ToListAsync();
+                    .AsNoTracking()
+                    .Where(p => p.Supplier.Id == supplierId)
+                    .Include(p => p.Supplier)
+                    .Skip(pageNumber * 20)
+                    .Take(20)
+                    .ToListAsync();
+
+            if (!partyEntities.Any() && pageNumber != 0)
+            {
+                pageNumber--;
+                partyEntities = await _context.Parties
+                    .AsNoTracking()
+                    .Where(p => p.Supplier.Id == supplierId)
+                    .Include(p => p.Supplier)
+                    .Skip(pageNumber * 20)
+                    .Take(20)
+                    .ToListAsync();
+            }
 
             var numberParties = await _context.Parties
                 .Where(p => p.Supplier.Id == supplierId)
@@ -94,7 +107,7 @@ namespace Gvz.Laboratory.SupplierService.Repositories
                 ?? throw new InvalidOperationException($"Party with Id '{party.Id}' was not found.");
 
             var supplierEntity = await _supplierRepository.GetSupplierEntityByIdAsync(party.SupplierId)
-                ?? throw new InvalidOperationException($"Supplier with Id '{party.ManufacturerId}' was not found.");
+                ?? throw new InvalidOperationException($"Supplier with Id '{party.SupplierId}' was not found.");
 
             existingParty.BatchNumber = party.BatchNumber;
             existingParty.DateOfReceipt = party.DateOfReceipt;

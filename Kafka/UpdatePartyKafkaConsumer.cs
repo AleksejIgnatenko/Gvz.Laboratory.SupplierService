@@ -12,7 +12,7 @@ namespace Gvz.Laboratory.SupplierService.Kafka
         private IConsumer<Ignore, string> _consumer;
         private CancellationTokenSource _cts;
         private readonly IPartyRepository _partyRepository;
-        public UpdatePartyKafkaConsumer(ConsumerConfig config, IPartyRepository partyRepository = null)
+        public UpdatePartyKafkaConsumer(ConsumerConfig config, IPartyRepository partyRepository)
         {
             _config = config;
             _partyRepository = partyRepository;
