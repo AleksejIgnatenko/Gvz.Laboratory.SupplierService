@@ -1,14 +1,18 @@
 using Confluent.Kafka;
 using Gvz.Laboratory.SupplierService;
 using Gvz.Laboratory.SupplierService.Abstractions;
+using Gvz.Laboratory.SupplierService.Helpers;
 using Gvz.Laboratory.SupplierService.Infrastructure;
 using Gvz.Laboratory.SupplierService.Kafka;
 using Gvz.Laboratory.SupplierService.Middleware;
 using Gvz.Laboratory.SupplierService.Repositories;
 using Gvz.Laboratory.SupplierService.Services;
 using Mapster;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using Serilog;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -25,6 +29,34 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+// Add JWT bearer authentication
+builder.Services.Configure<JwtOptions>(builder.Configuration.GetSection(nameof(JwtOptions)));
+var jwtOptions = builder.Configuration.GetSection(nameof(JwtOptions)).Get<JwtOptions>();
+
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
+    {
+        options.TokenValidationParameters = new()
+        {
+            ValidateIssuer = false,
+            ValidateAudience = false,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtOptions?.SecretKey ?? "secretkeysecretkeysecretkeysecretkeysecretkeysecretkeysecretkey"))
+        };
+
+        options.Events = new JwtBearerEvents
+        {
+            OnMessageReceived = context =>
+            {
+                context.Token = context.Request.Cookies["test-cookies"];
+                return Task.CompletedTask;
+            }
+        };
+    });
+
+builder.Services.AddAuthorization();
 
 builder.Services.AddDbContext<GvzLaboratorySupplierServiceDbContext>(options =>
 {
@@ -49,7 +81,7 @@ builder.Services.AddScoped<ISupplierKafkaProducer, SupplierKafkaProducer>();
 var consumerConfig = new ConsumerConfig
 {
     BootstrapServers = "kafka:29092",
-    GroupId = "manufacturer-group-id",
+    GroupId = "supplier-group-id",
     AutoOffsetReset = AutoOffsetReset.Earliest
 };
 builder.Services.AddSingleton(consumerConfig);
@@ -72,6 +104,15 @@ builder.Services.AddHostedService(provider => provider.GetRequiredService<Update
 builder.Services.AddSingleton<DeleteProductKafkaConsumer>();
 builder.Services.AddHostedService(provider => provider.GetRequiredService<DeleteProductKafkaConsumer>());
 
+builder.Services.AddSingleton<AddPartyKafkaConsumer>();
+builder.Services.AddHostedService(provider => provider.GetRequiredService<AddPartyKafkaConsumer>());
+
+builder.Services.AddSingleton<UpdatePartyKafkaConsumer>();
+builder.Services.AddHostedService(provider => provider.GetRequiredService<UpdatePartyKafkaConsumer>());
+
+builder.Services.AddSingleton<DeletePartyKafkaConsumer>();
+builder.Services.AddHostedService(provider => provider.GetRequiredService<DeletePartyKafkaConsumer>());
+
 
 builder.Services.AddScoped<ISupplierService, SupplierService>();
 builder.Services.AddScoped<ISupplierRepository, SupplierRepository>();
@@ -81,6 +122,9 @@ builder.Services.AddScoped<IManufacturerRepository, ManufacturerRepository>();
 
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
+
+builder.Services.AddScoped<IPartyService, PartyService>();
+builder.Services.AddScoped<IPartyRepository, PartyRepository>();
 
 var app = builder.Build();
 

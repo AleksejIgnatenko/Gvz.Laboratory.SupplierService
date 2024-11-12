@@ -55,6 +55,11 @@ namespace Gvz.Laboratory.SupplierService.Repositories
             return suppliers;
         }
 
+        public async Task<SupplierEntity?> GetSupplierEntityByIdAsync(Guid supplierId)
+        {
+            return await _context.Suppliers.FirstOrDefaultAsync(s => s.Id == supplierId);
+        }
+
         public async Task<List<SupplierEntity>> GetSuppliersByIdsAsync(List<Guid> suppliersIds)
         {
             var supplierEntities = await _context.Suppliers
