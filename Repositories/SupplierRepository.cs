@@ -108,6 +108,13 @@ namespace Gvz.Laboratory.SupplierService.Repositories
                 .FirstOrDefaultAsync(s => s.Id == supplier.Id)
                 ?? throw new RepositoryException("Поставщик не найден");
 
+            var existingSupplierName = await _context.Suppliers
+                .FirstOrDefaultAsync(s => (s.SupplierName == supplier.SupplierName) && (s.SupplierName != existingSupplier.SupplierName));
+            if (existingSupplierName != null)
+            {
+                throw new RepositoryException("Поставщик с таким именем уже существует.");
+            }
+
             existingSupplier.SupplierName = supplier.SupplierName;
 
             existingSupplier.Manufacturers.Clear();
