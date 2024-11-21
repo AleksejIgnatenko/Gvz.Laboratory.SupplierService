@@ -44,12 +44,14 @@ namespace Gvz.Laboratory.SupplierService.Repositories
         {
             var supplierEntities = await _context.Suppliers
                 .AsNoTracking()
+                .Include(s => s.Manufacturers)
                 .OrderByDescending(s => s.DateCreate)
                 .ToListAsync();
 
             var suppliers = supplierEntities.Select(s => SupplierModel.Create(
                 s.Id, 
                 s.SupplierName, 
+                s.Manufacturers.Select(m => ManufacturerModel.Create(m.Id, m.ManufacturerName)).ToList(),
                 false).supplier).ToList();
 
             return suppliers;
