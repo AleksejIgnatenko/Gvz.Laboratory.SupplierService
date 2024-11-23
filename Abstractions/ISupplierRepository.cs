@@ -11,6 +11,7 @@ namespace Gvz.Laboratory.SupplierService.Abstractions
         Task<SupplierEntity?> GetSupplierEntityByIdAsync(Guid supplierId);
         Task<List<SupplierEntity>> GetSuppliersByIdsAsync(List<Guid> suppliersIds);
         Task<(List<SupplierModel> suppliers, int numberSuppliers)> GetSuppliersForPageAsync(int pageNumber);
+        Task<(List<SupplierModel> suppliers, int numberSuppliers)> SearchSuppliersAsync(string searchQuery, int pageNumber);
         Task<Guid> UpdateSupplierAsync(SupplierModel supplier, List<Guid> manufacturersIds);
     }
 }

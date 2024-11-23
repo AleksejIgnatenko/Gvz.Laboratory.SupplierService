@@ -1,6 +1,7 @@
 ﻿using Gvz.Laboratory.SupplierService.Abstractions;
 using Gvz.Laboratory.SupplierService.Exceptions;
 using Gvz.Laboratory.SupplierService.Models;
+using OfficeOpenXml;
 
 namespace Gvz.Laboratory.SupplierService.Services
 {
@@ -41,6 +42,38 @@ namespace Gvz.Laboratory.SupplierService.Services
         public async Task<(List<SupplierModel> suppliers, int numberSuppliers)> GetSuppliersForPageAsync(int page)
         {
             return await _supplierRepository.GetSuppliersForPageAsync(page);
+        }
+
+        public async Task<(List<SupplierModel> suppliers, int numberSuppliers)> SearchSuppliersAsync(string searchQuery, int pageNumber)
+        {
+            return await _supplierRepository.SearchSuppliersAsync(searchQuery, pageNumber);
+        }
+
+        public async Task<MemoryStream> ExportSuppliersToExcelAsync()
+        {
+            var manufacturers = await _supplierRepository.GetSuppliersAsync();
+
+            using (var package = new ExcelPackage())
+            {
+                var worksheet = package.Workbook.Worksheets.Add("Suppliers");
+
+                worksheet.Cells[1, 1].Value = "Id";
+                worksheet.Cells[1, 2].Value = "Название";
+
+                for (int i = 0; i < manufacturers.Count; i++)
+                {
+                    worksheet.Cells[i + 2, 1].Value = manufacturers[i].Id;
+                    worksheet.Cells[i + 2, 2].Value = manufacturers[i].SupplierName;
+                }
+
+                worksheet.Cells.AutoFitColumns();
+
+                var stream = new MemoryStream();
+                await package.SaveAsAsync(stream);
+
+                stream.Position = 0; // Сбрасываем поток
+                return stream;
+            }
         }
 
         public async Task<Guid> UpdateSupplierAsync(Guid id, string name, List<Guid> manufacturersIds)

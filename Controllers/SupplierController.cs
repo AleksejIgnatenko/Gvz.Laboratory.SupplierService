@@ -1,5 +1,7 @@
 ﻿using Gvz.Laboratory.SupplierService.Abstractions;
 using Gvz.Laboratory.SupplierService.Contracts;
+using Gvz.Laboratory.SupplierService.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Gvz.Laboratory.SupplierService.Controllers
@@ -56,6 +58,28 @@ namespace Gvz.Laboratory.SupplierService.Controllers
 
             var responseWrapper = new GetSuppliersForPageResponseWrapper(response, numberSuppliers);
 
+            return Ok(responseWrapper);
+        }
+
+        [HttpGet]
+        [Route("exportSuppliersToExcel")]
+        [Authorize]
+        public async Task<ActionResult> ExportSuppliersToExcelAsync()
+        {
+            var stream = await _supplierService.ExportSuppliersToExcelAsync();
+            var fileName = "Suppliers.xlsx";
+
+            return File(stream, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
+        }
+
+        [HttpGet]
+        [Route("searchSuppliers")]
+        [Authorize]
+        public async Task<ActionResult> SearchSuppliersAsync(string searchQuery, int pageNumber)
+        {
+            var (suppliers, numberSuppliers) = await _supplierService.SearchSuppliersAsync(searchQuery, pageNumber);
+            var response = suppliers.Select(s => new GetSuppliersResponse(s.Id, s.SupplierName)).ToList();
+            var responseWrapper = new GetSuppliersForPageResponseWrapper(response, numberSuppliers);
             return Ok(responseWrapper);
         }
 
