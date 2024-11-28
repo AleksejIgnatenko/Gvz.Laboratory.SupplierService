@@ -35,6 +35,7 @@ namespace Gvz.Laboratory.SupplierService.Repositories
                     {
                         Id = product.Id,
                         ProductName = product.ProductName,
+                        UnitsOfMeasurement = product.UnitsOfMeasurement,
                         Suppliers = supplierEntity,
                     };
 
@@ -58,7 +59,7 @@ namespace Gvz.Laboratory.SupplierService.Repositories
                 throw new RepositoryException("Поставщик не найден");
             }
 
-            var suppliers = supplierEntity.Products.Select(p => ProductModel.Create(p.Id, p.ProductName)).ToList();
+            var suppliers = supplierEntity.Products.Select(p => ProductModel.Create(p.Id, p.ProductName, p.UnitsOfMeasurement)).ToList();
 
             return suppliers;
         }
@@ -77,7 +78,7 @@ namespace Gvz.Laboratory.SupplierService.Repositories
                 .SelectMany(p => p.Products)
                 .CountAsync();
 
-            var products = productEntities.Select(s => ProductModel.Create(s.Id, s.ProductName)).ToList();
+            var products = productEntities.Select(p => ProductModel.Create(p.Id, p.ProductName, p.UnitsOfMeasurement)).ToList();
 
             return (products, numberProducts);
         }
@@ -93,6 +94,7 @@ namespace Gvz.Laboratory.SupplierService.Repositories
             if (productEntity != null)
             {
                 productEntity.ProductName = product.ProductName;
+                productEntity.UnitsOfMeasurement = product.UnitsOfMeasurement;
 
                 productEntity.Suppliers.Clear();
                 productEntity.Suppliers.AddRange(supplierEntities);

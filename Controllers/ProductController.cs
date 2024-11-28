@@ -20,7 +20,7 @@ namespace Gvz.Laboratory.SupplierService.Controllers
         public async Task<ActionResult> GetSupplierProductsForPageAsync(Guid supplierId, int pageNumber)
         {
             var (products, numberSuppliers) = await _productService.GetSupplierProductsForPageAsync(supplierId, pageNumber);
-            var response = products.Select(s => new GetProductsResponse(s.Id, s.ProductName)).ToList();
+            var response = products.Select(p => new GetProductsResponse(p.Id, p.ProductName, p.UnitsOfMeasurement)).ToList();
             var responseWrapper = new GetProductsSuppliersForPageResponseWrapper(response, numberSuppliers);
             return Ok(responseWrapper);
         }

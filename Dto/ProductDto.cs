@@ -6,6 +6,7 @@ namespace Gvz.Laboratory.SupplierService.Dto
     {
         public Guid Id { get; set; }
         public string ProductName { get; set; } = string.Empty;
+        public string UnitsOfMeasurement { get; set; } = string.Empty;
         public List<Guid> SupplierIds { get; set; } = new List<Guid>();
     }
 }
