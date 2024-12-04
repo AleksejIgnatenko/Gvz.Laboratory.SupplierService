@@ -16,8 +16,8 @@ namespace Gvz.Laboratory.SupplierService.Controllers
         }
 
         [HttpGet]
+        [Route("getSupplierPartiesForPage")]        
         [Authorize]
-        [Route("getSupplierPartiesForPage")]
         public async Task<ActionResult> GetSupplierPartiesForPageAsync(Guid supplierId, int pageNumber)
         {
             var (parties, numberParties) = await _partyService.GetSupplierPartiesForPageAsync(supplierId, pageNumber);

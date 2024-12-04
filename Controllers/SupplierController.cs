@@ -1,6 +1,5 @@
 ﻿using Gvz.Laboratory.SupplierService.Abstractions;
 using Gvz.Laboratory.SupplierService.Contracts;
-using Gvz.Laboratory.SupplierService.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -18,6 +17,7 @@ namespace Gvz.Laboratory.SupplierService.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin,Manager,Worker")]
         public async Task<ActionResult> CreateSupplierAsync([FromBody] CreateSupplierRequest createSupplierRequest)
         {
             var id = await _supplierService.CreateSupplierAsync(Guid.NewGuid(),
@@ -29,6 +29,7 @@ namespace Gvz.Laboratory.SupplierService.Controllers
 
         [HttpGet]
         [Route("getSuppliersAsync")]
+        [Authorize]
         public async Task<ActionResult> GetSuppliersAsync()
         {
             var suppliers = await _supplierService.GetSuppliersAsync();
@@ -40,6 +41,7 @@ namespace Gvz.Laboratory.SupplierService.Controllers
 
         [HttpGet]
         [Route("getSuppliersForOptions")]
+        [Authorize]
         public async Task<ActionResult> GetSuppliersForOptionsAsync()
         {
             var suppliers = await _supplierService.GetSuppliersAsync();
@@ -50,6 +52,7 @@ namespace Gvz.Laboratory.SupplierService.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         public async Task<ActionResult> GetSuppliersForPageAsync(int page)
         {
             var (suppliers, numberSuppliers) = await _supplierService.GetSuppliersForPageAsync(page);
@@ -84,6 +87,7 @@ namespace Gvz.Laboratory.SupplierService.Controllers
         }
 
         [HttpPut("{id:guid}")]
+        [Authorize(Roles = "Admin,Manager,Worker")]
         public async Task<ActionResult> UpdateSupplierAsync(Guid id, [FromBody] UpdateSupplierRequest updateSupplierRequest)
         {
             await _supplierService.UpdateSupplierAsync(id, updateSupplierRequest.SupplierName, updateSupplierRequest.ManufacturersIds);
@@ -91,6 +95,7 @@ namespace Gvz.Laboratory.SupplierService.Controllers
         }
 
         [HttpDelete]
+        [Authorize(Roles = "Admin,Manager,Worker")]
         public async Task<ActionResult> DeleteSuppliersAsync([FromBody] List<Guid> ids)
         {
             if (ids == null || !ids.Any())

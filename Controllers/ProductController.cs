@@ -1,5 +1,6 @@
 ﻿using Gvz.Laboratory.SupplierService.Abstractions;
 using Gvz.Laboratory.SupplierService.Contracts;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Gvz.Laboratory.SupplierService.Controllers
@@ -17,6 +18,7 @@ namespace Gvz.Laboratory.SupplierService.Controllers
 
         [HttpGet]
         [Route("getSupplierProductsForPageAsync")]
+        [Authorize]
         public async Task<ActionResult> GetSupplierProductsForPageAsync(Guid supplierId, int pageNumber)
         {
             var (products, numberSuppliers) = await _productService.GetSupplierProductsForPageAsync(supplierId, pageNumber);
